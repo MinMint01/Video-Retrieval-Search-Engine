@@ -75,8 +75,14 @@ VIDEO RETRIEVAL SEARCH ENGINE
   <div class="container">
     <input type="link1" name="Input" placeholder="Enter the input video link..." size="100" required><br><br>
     <input type="link2" name="DB" placeholder="Enter the video database link..." size="100" required><br><br>
-    <button type="submit"><b>SEARCH</b></button><br>
+    <button id="myButton">SEARCH</button>
+        
   </div>
 </form>
+<script>
+    document.getElementById("myButton").addEventListener("click", function() {
+  window.location.href = "file:///D:/new.html";
+});
+  </script>
 </body>
 </html>
