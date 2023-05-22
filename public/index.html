@@ -12,7 +12,7 @@
                 font-family: Arial, Helvetica, sans-serif;
             }
             
-            input[type=link1],input[type=link2]
+            input[type=text]
             {
                 position: center;
                 width: 731px;
@@ -23,6 +23,7 @@
             }
             form
             {
+                position: center;
             }
             
             button
@@ -64,25 +65,17 @@
             }
         </style>
     </head>
-<body>
-
-<h2 style="position: center; font-style: normal; font-weight: 300; font-size: 30px; line-height: 57px; color: #FFFFFF;
-text-shadow: 0px 10px 10px rgba(0, 0, 0, 0.25);">
-VIDEO RETRIEVAL SEARCH ENGINE
-</h2>
-
-<form>
-  <div class="container">
-    <input type="link1" name="Input" placeholder="Enter the input video link..." size="100" required><br><br>
-    <input type="link2" name="DB" placeholder="Enter the video database link..." size="100" required><br><br>
-    <button id="myButton">SEARCH</button>
-        
-  </div>
-</form>
-<script>
-    document.getElementById("myButton").addEventListener("click", function() {
-  window.location.href = "E:\\saintgits folder\\T (Mini Project)\\CODE\\index1.html";
-});
-  </script>
-</body>
+    <body>
+        <h2 style="position: center; font-style: normal; font-weight: 300; font-size: 30px; line-height: 57px; color: #FFFFFF; text-shadow: 0px 10px 10px rgba(0, 0, 0, 0.25);">VIDEO RETRIEVAL SEARCH ENGINE</h2>
+        <form>
+            <div class="container">
+                <input type="text" name="Input" placeholder="Enter the input video link..." size="100" required><br><br>
+                <input type="text" name="DB" placeholder="Enter the video database link..." size="100" required><br><br>
+                <button id="myButton">SEARCH</button>      
+            </div>
+        </form>
+        <script>
+            document.getElementById("myButton").addEventListener("click", function() {window.location.href = "E:\\saintgits folder\\T (Mini Project)\\CODE\\public\\index1.html";});
+        </script>
+    </body>
 </html>
