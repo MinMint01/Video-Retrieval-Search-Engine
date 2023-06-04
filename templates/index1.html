@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Video Retrieval Search Engine - Search Results</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body
+            {
+                text-align: center;
+                background: #000000;
+                background-image: url(templates\sk6aqjh1ro371.png) center center/auto no-repeat fixed;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            @media screen and (max-width: 300px)
+            {
+                span.psw
+                {
+                    display: block;
+                    float: none;
+                }
+            }
+            h3
+              {
+                color:white;
+                font-size:25px;
+              }
+        </style> 
+    </head>
+
+    <body>
+        <form>
+            <center>
+                <h2 style="position: center; font-style: normal; font-weight: 300; font-size: 30px; line-height: 57px; color: #FFFFFF; text-shadow: 0px 10px 10px rgba(0, 0, 0, 0.25);">VIDEO RETRIEVAL SEARCH ENGINE</h2>
+                <h3>SEARCH RESULTS</h3>
+                <h4 style="color:white;">Source Video Link in database :</h4>
+                <p style ="font-size:medium;color:white;">{{h}}</p>
+                {% if h!=s -%}
+                    <h4 style="color:white;">OR</h4>
+                    <p style ="font-size:medium;color:white;">{{s}}</p>
+                {% endif %}
+            </center>
+        </form>
+    </body>
+</html>
