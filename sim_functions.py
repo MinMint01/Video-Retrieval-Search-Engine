@@ -1,13 +1,13 @@
+#import necessary modules
 import cv2
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from skimage.metrics import structural_similarity as ssim
 from flask import Flask,render_template, request
 
-sim_functions=Flask(__name__)
+#MODULE: HISTOGRAM
 
-#HISTOGRAM
-# Function to extract color histograms as features from a video
+#Function to extract color histograms as features from a video
 def extract_color_histograms(video_path, bins=(8, 8, 8)):
     cap = cv2.VideoCapture(video_path)
     features = []
@@ -22,7 +22,7 @@ def extract_color_histograms(video_path, bins=(8, 8, 8)):
     cap.release()
     return np.array(features)
 
-# Function to calculate video similarity using color histograms
+#Function to calculate video similarity using color histograms
 def calculate_video_similarity(video1_path, video2_path):
     vf1 = extract_color_histograms(video1_path)
     vf2 = extract_color_histograms(video2_path)
@@ -30,41 +30,33 @@ def calculate_video_similarity(video1_path, video2_path):
     average_similarity = np.mean(similarity_matrix)
     return average_similarity
 
-#SSIM
+#MODULE: SSIM
 
-# Function to calculate SSIM between two videos
+#Function to calculate SSIM between two videos
 def calculate_ssim(video1, video2):
     cap1 = cv2.VideoCapture(video1)
     cap2 = cv2.VideoCapture(video2)
-
     ssim_scores = []
-
     while True:
         ret1, frame1 = cap1.read()
         ret2, frame2 = cap2.read()
-
         if not ret1 or not ret2:
             break
-        
         (H, W, C) = frame1.shape
         frame2 = cv2.resize(frame2, (W, H))
-
         # Convert frames to grayscale
         frame1_gray = cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY)
         frame2_gray = cv2.cvtColor(frame2, cv2.COLOR_BGR2GRAY)
-
         # Calculate SSIM between frames
         score = ssim(frame1_gray, frame2_gray)
-
         ssim_scores.append(score)
-
     cap1.release()
     cap2.release()
-
     # Calculate average SSIM score
     avg_ssim = np.mean(ssim_scores)
-
     return avg_ssim
+
+#MODULE: MAIN
 
 def main(input_link,db_link,n):
     ssim_results=[]
@@ -78,6 +70,11 @@ def main(input_link,db_link,n):
     histo_results.sort(reverse=True)
     ssim_results.sort(reverse=True)
     return ([histo_results[0][1],ssim_results[0][1]])
+
+#MODULE: FLASK
+
+#Creating Flask Instance
+sim_functions=Flask(__name__)
 
 @sim_functions.route("/")
 @sim_functions.route("/home")
