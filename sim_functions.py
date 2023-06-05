@@ -2,9 +2,6 @@ import cv2
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from skimage.metrics import structural_similarity as ssim
-#import tensorflow as tf
-#from tensorflow.keras.applications import ResNet50
-#from tensorflow.keras.applications.resnet50 import preprocess_input
 from flask import Flask,render_template, request
 
 sim_functions=Flask(__name__)
