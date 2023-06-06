@@ -93,4 +93,4 @@ def result():
     return render_template("results.html",h=h,s=s)
 
 if __name__=='__main__':
-    sim_functions.run(debug=False,host='0.0.0.0')
+    sim_functions.run(debug=True,port=5001)
