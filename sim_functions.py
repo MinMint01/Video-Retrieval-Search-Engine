@@ -90,7 +90,7 @@ def result():
     max_sim_video=main(link1,link2,int(num))
     h=max_sim_video[0]
     s=max_sim_video[1]
-    return render_template("index1.html",h=h,s=s)
+    return render_template("results.html",h=h,s=s)
 
 if __name__=='__main__':
-    sim_functions.run(debug=True,port=5001)
+    sim_functions.run(debug=False,host='0.0.0.0')
