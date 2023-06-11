@@ -107,12 +107,15 @@ sim_functions=Flask(__name__)
 def home():
     return render_template("index.html")
 
+
 @sim_functions.route("/result",methods=["post","get"])
 def result():
     output=request.form.to_dict()
     link1=output["Input"]
     link2=output["DB"]
     max_sim_video=main(link1,link2)
+    if len(max_sim_video)==0:
+        return render_template("no_results.html")
     h=max_sim_video[0]
     s=max_sim_video[1]
     return render_template("results.html",h=h,s=s)
