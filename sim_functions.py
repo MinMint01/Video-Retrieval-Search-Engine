@@ -1,5 +1,6 @@
 #import necessary modules
 import cv2
+import os
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from skimage.metrics import structural_similarity as ssim
@@ -58,17 +59,42 @@ def calculate_ssim(video1, video2):
 
 #MODULE: MAIN
 
-def main(input_link,db_link,n):
+def count_videos(db_path):
+    v_count = 0
+    for _, _, videos in os.walk(db_path):
+        v_count += len(videos)
+    return v_count
+
+def get_file_names(db_path):
+    vid_list = []
+    for v_name in os.listdir(db_path):
+        v_path = os.path.join(db_path, v_name)
+        if os.path.isfile(v_path) and v_path.endswith((".mp4", ".avi", ".mov")):
+            vid_list.append(v_path)
+    return vid_list
+
+def main(input_link,db_link):
     ssim_results=[]
     histo_results=[]
-    for i in range(n):
-        video_path = db_link +'\\Video%d.mp4' % i
+    # Load the input video
+    input_cap = cv2.VideoCapture(input_link)
+    if not input_cap.isOpened():
+        return render_template("error.html")
+    video_list=get_file_names(db_link)
+    for video_path in video_list:
+        video_cap = cv2.VideoCapture(video_path)
+        if not video_cap.isOpened():
+            continue
         h_score=calculate_video_similarity(input_link, video_path)
         histo_results.append([h_score,video_path])
         s_score=calculate_ssim(input_link,video_path)
         ssim_results.append([s_score,video_path])
+    input_cap.release()
     histo_results.sort(reverse=True)
     ssim_results.sort(reverse=True)
+    temp1,temp2=histo_results[0][0],ssim_results[0][0]
+    if temp1<=0 and temp2<=0:
+        return []
     return ([histo_results[0][1],ssim_results[0][1]])
 
 #MODULE: FLASK
@@ -86,8 +112,7 @@ def result():
     output=request.form.to_dict()
     link1=output["Input"]
     link2=output["DB"]
-    num=output["len"]
-    max_sim_video=main(link1,link2,int(num))
+    max_sim_video=main(link1,link2)
     h=max_sim_video[0]
     s=max_sim_video[1]
     return render_template("results.html",h=h,s=s)
