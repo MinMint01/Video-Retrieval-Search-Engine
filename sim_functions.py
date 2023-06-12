@@ -1,4 +1,4 @@
-#import necessary modules
+# Import necessary modules
 import cv2
 import os
 import numpy as np
@@ -6,9 +6,9 @@ from sklearn.metrics.pairwise import cosine_similarity
 from skimage.metrics import structural_similarity as ssim
 from flask import Flask,render_template, request, redirect
 
-#MODULE: HISTOGRAM
+# MODULE: HISTOGRAM
 
-#Function to extract color histograms as features from a video
+# Function to extract color histograms as features from a video
 def extract_color_histograms(video_path, bins=(8, 8, 8)):
     cap = cv2.VideoCapture(video_path)
     features = []
@@ -23,7 +23,7 @@ def extract_color_histograms(video_path, bins=(8, 8, 8)):
     cap.release()
     return np.array(features)
 
-#Function to calculate video similarity using color histograms
+# Function to calculate video similarity using color histograms
 def calculate_video_similarity(video1_path, video2_path):
     vf1 = extract_color_histograms(video1_path)
     vf2 = extract_color_histograms(video2_path)
@@ -33,7 +33,7 @@ def calculate_video_similarity(video1_path, video2_path):
 
 #MODULE: SSIM
 
-#Function to calculate SSIM between two videos
+# Function to calculate SSIM between two videos
 def calculate_ssim(video1, video2):
     cap1 = cv2.VideoCapture(video1)
     cap2 = cv2.VideoCapture(video2)
@@ -45,27 +45,26 @@ def calculate_ssim(video1, video2):
             break
         (H, W, C) = frame1.shape
         frame2 = cv2.resize(frame2, (W, H))
-        # Convert frames to grayscale
         frame1_gray = cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY)
         frame2_gray = cv2.cvtColor(frame2, cv2.COLOR_BGR2GRAY)
-        # Calculate SSIM between frames
         score = ssim(frame1_gray, frame2_gray)
         ssim_scores.append(score)
     cap1.release()
     cap2.release()
-    # Calculate average SSIM score
     avg_ssim = np.mean(ssim_scores)
     return avg_ssim
 
 #MODULE: MAIN
 
-def count_videos(db_path):
+# Count no: videos in the folder
+def count_videos(db_path): 
     v_count = 0
     for _, _, videos in os.walk(db_path):
         v_count += len(videos)
     return v_count
 
-def get_file_names(db_path):
+# Get the video names
+def get_file_names(db_path): 
     vid_list = []
     for v_name in os.listdir(db_path):
         v_path = os.path.join(db_path, v_name)
@@ -73,6 +72,7 @@ def get_file_names(db_path):
             vid_list.append(v_path)
     return vid_list
 
+# Main function
 def main(input_link,db_link):
     ssim_results=[]
     histo_results=[]
@@ -93,28 +93,32 @@ def main(input_link,db_link):
     histo_results.sort(reverse=True)
     ssim_results.sort(reverse=True)
     temp1,temp2=histo_results[0][0],ssim_results[0][0]
-    if temp1<=0 and temp2<=0:
+    if temp1<=0.4 and temp2<=0.3:
         return [None]
     return ([histo_results[0][1],ssim_results[0][1]])
 
 #MODULE: FLASK
 
-#Creating Flask Instance
+# Creating Flask Instance
 sim_functions=Flask(__name__)
 
+# Home page
 @sim_functions.route("/")
 @sim_functions.route("/home")
 def home():
     return render_template("index.html")
 
+# Error handling
 @sim_functions.route("/error")
 def error():
     return render_template("error.html")
 
+# No-matches case
 @sim_functions.route("/no_results")
 def no_results():
     return render_template("no_results.html")
 
+# Match-found case
 @sim_functions.route("/result",methods=["post","get"])
 def result():
     output=request.form.to_dict()
@@ -122,9 +126,9 @@ def result():
     link2=output["DB"]
     max_sim_video=main(link1,link2)
     if len(max_sim_video)==0:
-        return redirect("/error")  # Redirect to the error.html page
+        return redirect("/error")
     elif max_sim_video[0]==None:
-        return redirect("/no_results")  # Redirect to the no_results.html page
+        return redirect("/no_results")
     h=max_sim_video[0]
     s=max_sim_video[1]
     return render_template("results.html",h=h,s=s)
