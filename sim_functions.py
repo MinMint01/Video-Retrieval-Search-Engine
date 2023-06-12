@@ -4,7 +4,7 @@ import os
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from skimage.metrics import structural_similarity as ssim
-from flask import Flask,render_template, request
+from flask import Flask,render_template, request, redirect
 
 #MODULE: HISTOGRAM
 
@@ -79,7 +79,7 @@ def main(input_link,db_link):
     # Load the input video
     input_cap = cv2.VideoCapture(input_link)
     if not input_cap.isOpened():
-        return render_template("error.html")
+        return []
     video_list=get_file_names(db_link)
     for video_path in video_list:
         video_cap = cv2.VideoCapture(video_path)
@@ -94,7 +94,7 @@ def main(input_link,db_link):
     ssim_results.sort(reverse=True)
     temp1,temp2=histo_results[0][0],ssim_results[0][0]
     if temp1<=0 and temp2<=0:
-        return []
+        return [None]
     return ([histo_results[0][1],ssim_results[0][1]])
 
 #MODULE: FLASK
@@ -107,6 +107,13 @@ sim_functions=Flask(__name__)
 def home():
     return render_template("index.html")
 
+@sim_functions.route("/error")
+def error():
+    return render_template("error.html")
+
+@sim_functions.route("/no_results")
+def no_results():
+    return render_template("no_results.html")
 
 @sim_functions.route("/result",methods=["post","get"])
 def result():
@@ -115,7 +122,9 @@ def result():
     link2=output["DB"]
     max_sim_video=main(link1,link2)
     if len(max_sim_video)==0:
-        return render_template("no_results.html")
+        return redirect("/error")  # Redirect to the error.html page
+    elif max_sim_video[0]==None:
+        return redirect("/no_results")  # Redirect to the no_results.html page
     h=max_sim_video[0]
     s=max_sim_video[1]
     return render_template("results.html",h=h,s=s)
